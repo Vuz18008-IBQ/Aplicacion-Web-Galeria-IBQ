@@ -1,0 +1,101 @@
+<div class="container-fluid py-4 px-4">
+
+  <div class="d-flex align-items-center mb-4 gap-3 flex-wrap">
+    <h1 class="h2 mb-0 me-3">Obras</h1>
+
+    <div class="input-group flex-grow-1" style="max-width: 480px;">
+      <span class="input-group-text bg-white border-end-0 text-muted">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+        </svg>
+      </span>
+      <input
+        type="search"
+        class="form-control border-start-0"
+        placeholder="Buscar por nombre o autor..."
+        [(ngModel)]="busqueda"
+        (ngModelChange)="onBusquedaCambiada()">
+    </div>
+
+    <button type="button" class="btn btn-dark ms-auto" (click)="irNueva()">
+      + Añadir Obra
+    </button>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead class="text-muted small text-uppercase">
+          <tr>
+            <th class="ps-4" style="width: 90px;">Vista</th>
+            <th>Nombre de la obra</th>
+            <th>Autor</th>
+            <th>Fecha de creación</th>
+            <th class="text-end pe-4">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (obra of obrasPaginadas(); track obra.id) {
+            <tr>
+              <td class="ps-4">
+                @if (thumbnailUrl(obra); as url) {
+                  <img [src]="url" alt="" class="rounded thumbnail">
+                } @else {
+                  <div class="rounded bg-light thumbnail"></div>
+                }
+              </td>
+              <td>{{ obra.titulo }}</td>
+              <td>{{ nombreAutor(obra) }}</td>
+              <td>{{ fechaCreacion(obra) }}</td>
+              <td class="text-end pe-4">
+                <button type="button" class="btn btn-sm btn-outline-secondary me-1"
+                        title="Editar" (click)="editar(obra.id)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                  </svg>
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary"
+                        title="Borrar" (click)="borrar(obra.id)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="text-center text-muted py-5">No hay obras.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center px-4 py-3 border-top">
+      <div class="text-muted small">
+        Mostrando {{ inicioRango() }}-{{ finRango() }} de {{ obrasFiltradas().length }} obras
+      </div>
+      <div>
+        <button type="button" class="btn btn-outline-secondary btn-sm me-2"
+                [disabled]="pagina() === 0"
+                (click)="paginaAnterior()">
+          Anterior
+        </button>
+        <button type="button" class="btn btn-outline-secondary btn-sm"
+                [disabled]="pagina() >= totalPaginas() - 1"
+                (click)="paginaSiguiente()">
+          Siguiente
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center text-muted small mt-5">
+    <div>Panel de Administración - Gestión de Inventario de Obras © 2026</div>
+    <button type="button" class="btn btn-sm btn-link text-muted mt-2" (click)="logout()">
+      Cerrar sesión
+    </button>
+  </footer>
+
+</div>

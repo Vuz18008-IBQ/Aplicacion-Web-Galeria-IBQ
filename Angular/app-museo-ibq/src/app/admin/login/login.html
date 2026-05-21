@@ -1,0 +1,43 @@
+<div class="login-wrapper d-flex justify-content-center align-items-center">
+  <div class="card shadow-sm" style="width: 22rem;">
+    <div class="card-body p-4">
+      <h1 class="h4 text-center mb-4">Panel de Administración</h1>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input
+            id="email"
+            type="email"
+            class="form-control"
+            formControlName="email"
+            autocomplete="username">
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Contraseña</label>
+          <input
+            id="password"
+            type="password"
+            class="form-control"
+            formControlName="password"
+            autocomplete="current-password">
+        </div>
+
+        @if (error()) {
+          <div class="alert alert-danger py-2 mb-3">{{ error() }}</div>
+        }
+
+        <button
+          type="submit"
+          class="btn btn-dark w-100"
+          [disabled]="form.invalid || cargando()">
+          @if (cargando()) {
+            <span class="spinner-border spinner-border-sm me-2"></span>
+          }
+          Iniciar sesión
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

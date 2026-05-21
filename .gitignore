@@ -1,0 +1,14 @@
+# Ignorar esquemas
+Esquemas/
+# Node modules
+node_modules/
+#Vscode
+.vscode/
+#Compilados
+target/
+*.class
+*.jar
+*.war
+dist/
+.angular/cache/
+

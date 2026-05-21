@@ -1,0 +1,243 @@
+<div class="container-fluid py-4 px-4">
+  <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+
+    <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-3">
+      <div>
+        <h1 class="h3 mb-1">
+          @if (esEdicion()) { Editar Obra } @else { Añadir Nuevo Objeto }
+        </h1>
+        <div class="text-muted small">
+          Registro de catálogo para la base de datos de arte y artefactos
+        </div>
+      </div>
+      <div>
+        <button type="button" class="btn btn-outline-secondary me-2" (click)="cancelar()">Cancelar</button>
+        <button type="submit" class="btn btn-dark" [disabled]="cargando()">Guardar Registro</button>
+      </div>
+    </div>
+
+    @if (error()) {
+      <div class="alert alert-danger">{{ error() }}</div>
+    }
+
+    <div class="row g-4">
+
+      <div class="col-lg-4">
+
+        @if (imagenesExistentes().length > 0) {
+          <div class="mb-3">
+            <label class="form-label">Imágenes ya subidas</label>
+            <div class="row g-2">
+              @for (imagen of imagenesExistentes(); track imagen.id) {
+                <div class="col-6">
+                  <div class="image-thumb position-relative">
+                    <img [src]="urlImagen(imagen)" class="img-fluid rounded" alt="">
+                    @if (imagen.es_principal) {
+                      <span class="badge bg-dark position-absolute top-0 start-0 m-1">Principal</span>
+                    }
+                    <button type="button"
+                            class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1 btn-quitar"
+                            (click)="borrarExistente(imagen)" title="Borrar">
+                      ×
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (imagenesPendientes().length > 0) {
+          <div class="mb-3">
+            <label class="form-label">Pendientes de subir</label>
+            <div class="row g-2">
+              @for (pendiente of imagenesPendientes(); track pendiente.previewUrl) {
+                <div class="col-6">
+                  <div class="image-thumb position-relative">
+                    <img [src]="pendiente.previewUrl" class="img-fluid rounded" alt="">
+                    <button type="button"
+                            class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1 btn-quitar"
+                            (click)="quitarPendiente(pendiente)" title="Quitar">
+                      ×
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="card mb-3">
+          <div class="card-body text-center">
+            <label for="file-input" class="btn btn-outline-dark mb-0">
+              + Añadir imágenes
+            </label>
+            <input id="file-input" type="file" accept="image/jpeg,image/png,image/webp" multiple
+                   (change)="onArchivoSeleccionado($event)" hidden>
+            <div class="text-muted small mt-2">JPG, PNG o WEBP — máx. 20 MB</div>
+          </div>
+        </div>
+
+        <div class="card bg-light border-0">
+          <div class="card-body small">
+            <strong>ⓘ Ayuda de Registro</strong>
+            <p class="mb-0 mt-2">
+              Asegúrese de que las dimensiones estén expresadas en centímetros (alto x ancho x fondo).
+              Use el campo de observaciones para detalles no contemplados en las categorías estándar.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+
+        <h6 class="text-uppercase text-muted small mt-2 mb-3">Identificación Básica</h6>
+
+        <div class="mb-3">
+          <label for="titulo" class="form-label">Título / Nombre del Objeto</label>
+          <input id="titulo" type="text" class="form-control"
+                 [class.is-invalid]="form.controls.titulo.invalid && form.controls.titulo.touched"
+                 formControlName="titulo"
+                 placeholder="Ej. Retrato de caballero">
+          <div class="invalid-feedback">El título es obligatorio.</div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="autor" class="form-label">Autor / Creador</label>
+            <select id="autor" class="form-select"
+                    [class.is-invalid]="form.controls.autorId.invalid && form.controls.autorId.touched"
+                    formControlName="autorId">
+              <option [ngValue]="null">— Selecciona un autor —</option>
+              @for (autor of autores(); track autor.id) {
+                <option [ngValue]="autor.id">{{ autor.nombre }} {{ autor.apellidos }}</option>
+              }
+            </select>
+            <div class="invalid-feedback">Selecciona un autor.</div>
+          </div>
+          <div class="col-md-6">
+            <label for="datacion" class="form-label">Datación</label>
+            <input id="datacion" type="text" class="form-control"
+                   formControlName="datacion"
+                   placeholder="Ej. Siglo XVII (c. 1640)">
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="anio" class="form-label">Año (para filtrar)</label>
+            <input id="anio" type="number" class="form-control"
+                   formControlName="anio"
+                   placeholder="Ej. 1640">
+          </div>
+          <div class="col-md-6">
+            <label for="dimensiones" class="form-label">Dimensiones</label>
+            <input id="dimensiones" type="text" class="form-control"
+                   formControlName="dimensiones"
+                   placeholder="Ej. 120 x 85 cm">
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="tipologia" class="form-label">Tipología</label>
+            <input id="tipologia" type="text" class="form-control"
+                   formControlName="tipologia"
+                   placeholder="Ej. Pintura al óleo">
+          </div>
+          <div class="col-md-6">
+            <label for="tecnica" class="form-label">Técnica</label>
+            <select id="tecnica" class="form-select"
+                    [class.is-invalid]="form.controls.tecnicaId.invalid && form.controls.tecnicaId.touched"
+                    formControlName="tecnicaId">
+              <option [ngValue]="null">— Selecciona una técnica —</option>
+              @for (tecnica of tecnicas(); track tecnica.id) {
+                <option [ngValue]="tecnica.id">{{ tecnica.nombre }}</option>
+              }
+            </select>
+            <div class="invalid-feedback">Selecciona una técnica.</div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="descripcion" class="form-label">Descripción</label>
+          <textarea id="descripcion" class="form-control"
+                    formControlName="descripcion" rows="3"></textarea>
+        </div>
+
+        <h6 class="text-uppercase text-muted small mt-4 mb-3">Historia y Procedencia</h6>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="fecha_ingreso" class="form-label">Fecha de Ingreso</label>
+            <input id="fecha_ingreso" type="date" class="form-control"
+                   formControlName="fecha_ingreso">
+          </div>
+          <div class="col-md-6">
+            <label for="modo_ingreso" class="form-label">Modo de Ingreso</label>
+            <input id="modo_ingreso" type="text" class="form-control"
+                   formControlName="modo_ingreso">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="procedencia" class="form-label">Procedencia</label>
+          <input id="procedencia" type="text" class="form-control"
+                 formControlName="procedencia"
+                 placeholder="Origen anterior del objeto">
+        </div>
+
+        <div class="mb-3">
+          <label for="marcas_inscripciones" class="form-label">Marcas e Inscripciones</label>
+          <input id="marcas_inscripciones" type="text" class="form-control"
+                 formControlName="marcas_inscripciones"
+                 placeholder="Firmas, sellos, etiquetas posteriores...">
+        </div>
+
+        <div class="mb-4">
+          <label for="referencias" class="form-label">Referencias</label>
+          <input id="referencias" type="text" class="form-control"
+                 formControlName="referencias">
+        </div>
+
+        <h6 class="text-uppercase text-muted small mt-4 mb-3">Estado y Ubicación</h6>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="estado_conservacion" class="form-label">Estado de Conservación</label>
+            <input id="estado_conservacion" type="text" class="form-control"
+                   formControlName="estado_conservacion">
+          </div>
+          <div class="col-md-6">
+            <label for="ubicacion" class="form-label">Ubicación Actual</label>
+            <input id="ubicacion" type="text" class="form-control"
+                   formControlName="ubicacion"
+                   placeholder="Sala, vitrina, almacén...">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="restauraciones" class="form-label">Restauraciones</label>
+          <input id="restauraciones" type="text" class="form-control"
+                 formControlName="restauraciones"
+                 placeholder="Historial de intervenciones">
+        </div>
+
+        <div class="mb-3">
+          <label for="observaciones" class="form-label">Observaciones</label>
+          <textarea id="observaciones" class="form-control"
+                    formControlName="observaciones" rows="3"></textarea>
+        </div>
+
+        <div class="d-flex justify-content-end mt-4 pt-4 border-top">
+          <button type="button" class="btn btn-outline-secondary me-2" (click)="cancelar()">
+            Descartar Cambios
+          </button>
+          <button type="submit" class="btn btn-dark" [disabled]="cargando()">
+            Finalizar Registro
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
