@@ -36,6 +36,7 @@
 .logo-img {
   height: 44px;
   display: block;
+  filter: invert(1);
 }
 
 .header-spacer {
@@ -298,12 +299,37 @@
 /* ── FOOTER ── */
 
 .site-footer {
-  background: var(--color-header);
-  text-align: center;
-  padding: 18px;
-  font-size: 0.8rem;
-  color: var(--color-texto-tenue);
+  background: #000;
+  color: #ffffff;
+  padding: 28px 20px 20px;
   font-family: var(--fuente-base);
+  text-align: center;
+}
+.footer-content {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.footer-line {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #e0e0e0;
+}
+.footer-line a {
+  color: #ffffff;
+  text-decoration: none;
+}
+.footer-line a:hover {
+  text-decoration: underline;
+}
+.footer-copy {
+  margin: 14px 0 0;
+  font-size: 0.75rem;
+  color: #999999;
+  border-top: 1px solid #333333;
+  padding-top: 12px;
 }
 
 /* ── RESPONSIVE ── */
