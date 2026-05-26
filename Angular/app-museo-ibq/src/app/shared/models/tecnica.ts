@@ -3,3 +3,7 @@ export interface Tecnica {
   nombre: string;
   estado_borrado?: boolean;
 }
+
+export interface TecnicaRequest {
+  nombre: string;
+}

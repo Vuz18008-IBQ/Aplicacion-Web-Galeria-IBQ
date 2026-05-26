@@ -1,1 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
+
+:root {
+  --fuente-base: Helvetica, Arial, sans-serif;
+
+  --color-texto: #2C2F36;
+  --color-texto-suave: #6B6E75;
+  --color-texto-tenue: #9B9DA3;
+
+  --color-fondo: #F5F4F0;
+  --color-superficie: #FFFFFF;
+  --color-superficie-alt: #ECEAE6;
+  --color-header: #E8E6E2;
+
+  --color-borde: #D8D6D2;
+  --color-borde-suave: #E2E0DC;
+
+  --color-acento: #F34B21;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}

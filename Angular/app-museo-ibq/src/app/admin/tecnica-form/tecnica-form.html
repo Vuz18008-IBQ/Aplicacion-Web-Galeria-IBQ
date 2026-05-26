@@ -1,0 +1,30 @@
+<div class="container-fluid py-4 px-4">
+  <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+
+    <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-3">
+      <h1 class="h3 mb-0">
+        @if (esEdicion()) { Editar Técnica } @else { Añadir Técnica }
+      </h1>
+      <div>
+        <button type="button" class="btn btn-outline-secondary me-2" (click)="cancelar()">Cancelar</button>
+        <button type="submit" class="btn btn-dark" [disabled]="cargando()">Guardar</button>
+      </div>
+    </div>
+
+    @if (error()) {
+      <div class="alert alert-danger">{{ error() }}</div>
+    }
+
+    <div class="card border-0 shadow-sm p-4 mx-auto" style="max-width: 500px;">
+      <div class="mb-3">
+        <label for="nombre" class="form-label">Nombre</label>
+        <input id="nombre" type="text" class="form-control"
+               [class.is-invalid]="form.controls.nombre.invalid && form.controls.nombre.touched"
+               formControlName="nombre"
+               placeholder="Ej. Óleo sobre lienzo">
+        <div class="invalid-feedback">El nombre es obligatorio.</div>
+      </div>
+    </div>
+
+  </form>
+</div>

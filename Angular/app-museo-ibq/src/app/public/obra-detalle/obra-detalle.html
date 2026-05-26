@@ -1,0 +1,161 @@
+<header class="site-header" [class.scrolled]="scrolled()">
+  <div class="header-logo">
+    <img src="/logo-ibq.svg" alt="IBQ" class="logo-img" />
+  </div>
+  <div class="header-spacer"></div>
+</header>
+
+<main class="page-main">
+  @if (cargando()) {
+    <div class="estado-cargando">Cargando…</div>
+  } @else if (obra()) {
+    <section class="hero-detalle">
+      <a class="hero-categoria-link" (click)="volver()">Museo de arte</a>
+      <h1 class="hero-titulo-obra">{{ obra()!.titulo }}</h1>
+      <div class="hero-titulo-linea"></div>
+      <p class="hero-meta">{{ nombreAutor() }} · {{ fechaDisplay() }}</p>
+    </section>
+
+    <div class="detalle-layout">
+
+      <!-- COLUMNA IZQUIERDA: carrusel -->
+      <div class="detalle-galeria">
+        <div class="carousel">
+          @if (imagenes().length > 0) {
+            <div class="carousel-main">
+              <img
+                [src]="imagenUrl(imagenes()[imagenActual()])"
+                [alt]="obra()!.titulo"
+                class="carousel-img"
+                decoding="async"
+              />
+              @if (imagenes().length > 1) {
+                <button class="carousel-btn carousel-btn-prev" (click)="anterior()" aria-label="Anterior">&#8249;</button>
+                <button class="carousel-btn carousel-btn-next" (click)="siguiente()" aria-label="Siguiente">&#8250;</button>
+                <div class="carousel-counter">{{ imagenActual() + 1 }} / {{ imagenes().length }}</div>
+              }
+            </div>
+            @if (imagenes().length > 1) {
+              <div class="carousel-thumbs">
+                @for (img of imagenes(); track img.id; let i = $index) {
+                  <button
+                    class="thumb-btn"
+                    [class.thumb-activa]="i === imagenActual()"
+                    (click)="seleccionarImagen(i)"
+                    [attr.aria-label]="'Imagen ' + (i + 1)"
+                  >
+                    <img [src]="imagenUrl(img)" [alt]="'Imagen ' + (i + 1)" loading="lazy" decoding="async" />
+                  </button>
+                }
+              </div>
+            }
+          } @else {
+            <div class="carousel-vacio">
+              <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#CCC" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                <path d="m21 15-5-5L5 21"/>
+              </svg>
+              <span>Sin imágenes</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- COLUMNA DERECHA: información -->
+      <div class="detalle-info">
+        <div class="obra-ficha">
+          @if (obra()!.tipologia) {
+            <div class="ficha-fila">
+              <span class="ficha-label">Tipología</span>
+              <span class="ficha-valor">{{ obra()!.tipologia }}</span>
+            </div>
+          }
+          @if (obra()!.tecnica) {
+            <div class="ficha-fila">
+              <span class="ficha-label">Técnica</span>
+              <span class="ficha-valor">{{ obra()!.tecnica!.nombre }}</span>
+            </div>
+          }
+          @if (obra()!.materiales && obra()!.materiales!.length > 0) {
+            <div class="ficha-fila">
+              <span class="ficha-label">Material</span>
+              <span class="ficha-valor">{{ obra()!.materiales!.map(m => m.nombre).join(', ') }}</span>
+            </div>
+          }
+          @if (obra()!.dimensiones) {
+            <div class="ficha-fila">
+              <span class="ficha-label">Dimensiones</span>
+              <span class="ficha-valor">{{ obra()!.dimensiones }}</span>
+            </div>
+          }
+          @if (obra()!.procedencia) {
+            <div class="ficha-fila">
+              <span class="ficha-label">Procedencia</span>
+              <span class="ficha-valor">{{ obra()!.procedencia }}</span>
+            </div>
+          }
+          @if (fechaIngresoDisplay(); as fechaIng) {
+            <div class="ficha-fila">
+              <span class="ficha-label">Fecha de ingreso</span>
+              <span class="ficha-valor">{{ fechaIng }}</span>
+            </div>
+          }
+          @if (obra()!.modo_ingreso) {
+            <div class="ficha-fila">
+              <span class="ficha-label">Modo de ingreso</span>
+              <span class="ficha-valor">{{ obra()!.modo_ingreso }}</span>
+            </div>
+          }
+          @if (obra()!.ubicacion) {
+            <div class="ficha-fila">
+              <span class="ficha-label">Ubicación</span>
+              <span class="ficha-valor">{{ obra()!.ubicacion }}</span>
+            </div>
+          }
+          @if (obra()!.estado_conservacion) {
+            <div class="ficha-fila">
+              <span class="ficha-label">Estado de conservación</span>
+              <span class="ficha-valor">{{ obra()!.estado_conservacion }}</span>
+            </div>
+          }
+        </div>
+
+        @if (obra()!.descripcion) {
+          <div class="obra-seccion">
+            <h2 class="seccion-titulo">Descripción</h2>
+            <p class="seccion-texto">{{ obra()!.descripcion }}</p>
+          </div>
+        }
+        @if (obra()!.marcas_inscripciones) {
+          <div class="obra-seccion">
+            <h2 class="seccion-titulo">Marcas e inscripciones</h2>
+            <p class="seccion-texto">{{ obra()!.marcas_inscripciones }}</p>
+          </div>
+        }
+        @if (obra()!.restauraciones) {
+          <div class="obra-seccion">
+            <h2 class="seccion-titulo">Restauraciones</h2>
+            <p class="seccion-texto">{{ obra()!.restauraciones }}</p>
+          </div>
+        }
+        @if (obra()!.referencias) {
+          <div class="obra-seccion">
+            <h2 class="seccion-titulo">Referencias</h2>
+            <p class="seccion-texto">{{ obra()!.referencias }}</p>
+          </div>
+        }
+        @if (obra()!.observaciones) {
+          <div class="obra-seccion">
+            <h2 class="seccion-titulo">Observaciones</h2>
+            <p class="seccion-texto">{{ obra()!.observaciones }}</p>
+          </div>
+        }
+      </div>
+
+    </div>
+  }
+</main>
+
+<footer class="site-footer">
+  IES Bernaldo de Quirós · Colección de Arte
+</footer>

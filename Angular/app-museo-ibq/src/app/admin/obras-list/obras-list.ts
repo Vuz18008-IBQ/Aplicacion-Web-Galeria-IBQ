@@ -1,6 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Auth } from '../../core/auth';
 import { Obras } from '../../core/obras';
 import { Obra } from '../../shared/models/obra';
@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-obras-list',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink, RouterLinkActive],
   templateUrl: './obras-list.html',
   styleUrl: './obras-list.css'
 })

@@ -1,5 +1,20 @@
 <div class="container-fluid py-4 px-4">
 
+  <ul class="nav nav-underline mb-4">
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/obras" routerLinkActive="active">Obras</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/autores" routerLinkActive="active">Autores</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/tecnicas" routerLinkActive="active">Técnicas</a>
+    </li>
+    <li class="nav-item ms-auto">
+      <button type="button" class="btn btn-sm btn-link text-muted" (click)="logout()">Cerrar sesión</button>
+    </li>
+  </ul>
+
   <div class="d-flex align-items-center mb-4 gap-3 flex-wrap">
     <h1 class="h2 mb-0 me-3">Obras</h1>
 
@@ -93,9 +108,6 @@
 
   <footer class="text-center text-muted small mt-5">
     <div>Panel de Administración - Gestión de Inventario de Obras © 2026</div>
-    <button type="button" class="btn btn-sm btn-link text-muted mt-2" (click)="logout()">
-      Cerrar sesión
-    </button>
   </footer>
 
 </div>
