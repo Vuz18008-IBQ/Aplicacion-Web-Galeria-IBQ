@@ -30,4 +30,5 @@ public class ObraRequestDTO {
     private String observaciones;
     private Long autorId;
     private Long tecnicaId;
+    private List<Long> materialIds;
 }

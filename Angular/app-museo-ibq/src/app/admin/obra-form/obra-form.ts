@@ -4,10 +4,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, of, switchMap } from 'rxjs';
 import { Autores } from '../../core/autores';
 import { Tecnicas } from '../../core/tecnicas';
+import { Materiales } from '../../core/materiales';
 import { Obras } from '../../core/obras';
 import { Imagenes } from '../../core/imagenes';
 import { Autor } from '../../shared/models/autor';
 import { Tecnica } from '../../shared/models/tecnica';
+import { Material } from '../../shared/models/material';
 import { Imagen } from '../../shared/models/imagen';
 import { ObraRequest } from '../../shared/models/obra';
 
@@ -28,11 +30,14 @@ export class ObraForm implements OnInit, OnDestroy {
   private router = inject(Router);
   private autoresService = inject(Autores);
   private tecnicasService = inject(Tecnicas);
+  private materialesService = inject(Materiales);
   private obrasService = inject(Obras);
   private imagenesService = inject(Imagenes);
 
   autores = signal<Autor[]>([]);
   tecnicas = signal<Tecnica[]>([]);
+  materiales = signal<Material[]>([]);
+  materialesSeleccionados = signal<number[]>([]);
   cargando = signal(false);
   error = signal<string | null>(null);
   obraId = signal<number | null>(null);
@@ -64,6 +69,7 @@ export class ObraForm implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.autoresService.findAll().subscribe(autores => this.autores.set(autores));
     this.tecnicasService.findAll().subscribe(tecnicas => this.tecnicas.set(tecnicas));
+    this.materialesService.findAll().subscribe(materiales => this.materiales.set(materiales));
 
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
@@ -91,6 +97,7 @@ export class ObraForm implements OnInit, OnDestroy {
           tecnicaId: obra.tecnica?.id ?? null
         });
         if (obra.imagenes) this.imagenesExistentes.set(obra.imagenes);
+        if (obra.materiales) this.materialesSeleccionados.set(obra.materiales.map(m => m.id));
       });
     }
   }
@@ -128,6 +135,16 @@ export class ObraForm implements OnInit, OnDestroy {
     return this.imagenesService.fullUrl(imagen);
   }
 
+  toggleMaterial(id: number): void {
+    this.materialesSeleccionados.update(arr =>
+      arr.includes(id) ? arr.filter(m => m !== id) : [...arr, id]
+    );
+  }
+
+  esMaterialSeleccionado(id: number): boolean {
+    return this.materialesSeleccionados().includes(id);
+  }
+
   cancelar(): void {
     this.router.navigate(['/admin/obras']);
   }
@@ -159,7 +176,8 @@ export class ObraForm implements OnInit, OnDestroy {
       ubicacion: v.ubicacion || null,
       observaciones: v.observaciones || null,
       autorId: v.autorId!,
-      tecnicaId: v.tecnicaId!
+      tecnicaId: v.tecnicaId!,
+      materialIds: this.materialesSeleccionados()
     };
 
     const guardarObs = this.esEdicion()

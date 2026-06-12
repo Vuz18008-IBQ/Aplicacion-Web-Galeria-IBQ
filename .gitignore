@@ -1,6 +1,7 @@
 # Ignorar esquemas
 Esquemas/
 Uploads/
+Documentacion/
 # Node modules
 node_modules/
 #Vscode
@@ -12,4 +13,5 @@ target/
 *.war
 dist/
 .angular/cache/
+.gitignore
 

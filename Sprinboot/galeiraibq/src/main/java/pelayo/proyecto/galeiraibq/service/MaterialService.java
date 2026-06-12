@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pelayo.proyecto.galeiraibq.model.Material;
 import pelayo.proyecto.galeiraibq.repository.MaterialRepository;
+import pelayo.proyecto.galeiraibq.requestDTO.MaterialRequestDTO;
+import pelayo.proyecto.galeiraibq.responseDTO.MaterialResponseDTO;
 
 import java.util.List;
 
@@ -17,21 +19,31 @@ public class MaterialService {
         this.materialRepository = materialRepository;
     }
 
-    public Material addMaterial(Material material) {
-        return materialRepository.save(material);
+    public MaterialResponseDTO addMaterial(MaterialRequestDTO dto) {
+        Material material = new Material();
+        material.setNombre(dto.getNombre());
+        material.setEstado_borrado(false);
+        return mapToDTO(materialRepository.save(material));
     }
 
-    public List<Material> findAllMaterial() {
-        return materialRepository.findAll();
+    public List<MaterialResponseDTO> findAllMaterial() {
+        return materialRepository.findAll().stream()
+                .map(this::mapToDTO)
+                .toList();
     }
 
-    public Material findMaterialById(Long id) {
-        return materialRepository.findById(id)
+    public MaterialResponseDTO findMaterialById(Long id) {
+        Material material = materialRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Material no encontrado con id: " + id));
+        return mapToDTO(material);
     }
 
-    public Material updateMaterial(Material material) {
-        return materialRepository.save(material);
+    public MaterialResponseDTO updateMaterial(MaterialRequestDTO dto, Long id) {
+        Material material = materialRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Material no encontrado con id: " + id));
+        material.setNombre(dto.getNombre());
+        material.setEstado_borrado(false);
+        return mapToDTO(materialRepository.save(material));
     }
 
     public void deleteMaterialById(Long id) {
@@ -39,5 +51,12 @@ public class MaterialService {
                 .orElseThrow(() -> new RuntimeException("Material no encontrado con id: " + id));
         material.setEstado_borrado(true);
         materialRepository.save(material);
+    }
+
+    private MaterialResponseDTO mapToDTO(Material material) {
+        return MaterialResponseDTO.builder()
+                .id(material.getId())
+                .nombre(material.getNombre())
+                .build();
     }
 }

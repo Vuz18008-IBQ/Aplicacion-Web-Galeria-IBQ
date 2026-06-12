@@ -3,3 +3,7 @@ export interface Material {
   nombre: string;
   estado_borrado?: boolean;
 }
+
+export interface MaterialRequest {
+  nombre: string;
+}

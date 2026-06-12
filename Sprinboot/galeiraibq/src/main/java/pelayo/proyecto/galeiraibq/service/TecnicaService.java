@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pelayo.proyecto.galeiraibq.model.Tecnica;
 import pelayo.proyecto.galeiraibq.repository.TecnicaRepository;
+import pelayo.proyecto.galeiraibq.requestDTO.TecnicaRequestDTO;
 import pelayo.proyecto.galeiraibq.responseDTO.TecnicaDTO;
 
 import java.util.List;
@@ -18,7 +19,9 @@ public class TecnicaService {
         this.tecnicaRepository = tecnicaRepository;
     }
 
-    public TecnicaDTO addTecnica(Tecnica tecnica) {
+    public TecnicaDTO addTecnica(TecnicaRequestDTO dto) {
+        Tecnica tecnica = new Tecnica();
+        tecnica.setNombre(dto.getNombre());
         tecnica.setEstado_borrado(false);
         return mapToDTO(tecnicaRepository.save(tecnica));
     }
@@ -35,7 +38,11 @@ public class TecnicaService {
         return mapToDTO(tecnica);
     }
 
-    public TecnicaDTO updateTecnica(Tecnica tecnica) {
+    public TecnicaDTO updateTecnica(TecnicaRequestDTO dto, Long id) {
+        Tecnica tecnica = tecnicaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tecnica no encontrada con id: " + id));
+        tecnica.setNombre(dto.getNombre());
+        tecnica.setEstado_borrado(false);
         return mapToDTO(tecnicaRepository.save(tecnica));
     }
 

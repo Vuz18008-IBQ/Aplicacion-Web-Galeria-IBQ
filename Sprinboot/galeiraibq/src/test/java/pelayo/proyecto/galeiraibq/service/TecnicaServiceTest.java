@@ -2,11 +2,13 @@ package pelayo.proyecto.galeiraibq.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pelayo.proyecto.galeiraibq.model.Tecnica;
 import pelayo.proyecto.galeiraibq.repository.TecnicaRepository;
+import pelayo.proyecto.galeiraibq.requestDTO.TecnicaRequestDTO;
 import pelayo.proyecto.galeiraibq.responseDTO.TecnicaDTO;
 
 import java.util.List;
@@ -32,17 +34,19 @@ class TecnicaServiceTest {
 
     @Test
     void addTecnica_estableceEstadoBorradoFalseYDevuelveDTO() {
-        // Arrange: una tecnica de entrada sin estado_borrado asignado.
-        Tecnica entrada = new Tecnica();
-        entrada.setNombre("Acrilico");
+        // Arrange: un DTO de entrada.
+        TecnicaRequestDTO entrada = TecnicaRequestDTO.builder()
+                .nombre("Acrilico")
+                .build();
 
         // Cuando el servicio llame a save, devolvemos la misma entidad pero
         // con un id ya generado (simulando lo que MySQL haria).
-        Tecnica guardada = new Tecnica();
-        guardada.setId(1L);
-        guardada.setNombre("Acrilico");
-        guardada.setEstado_borrado(false);
-        when(tecnicaRepository.save(any(Tecnica.class))).thenReturn(guardada);
+        when(tecnicaRepository.save(any(Tecnica.class)))
+                .thenAnswer(invocation -> {
+                    Tecnica t = invocation.getArgument(0);
+                    t.setId(1L);
+                    return t;
+                });
 
         // Act
         TecnicaDTO resultado = tecnicaService.addTecnica(entrada);
@@ -52,9 +56,10 @@ class TecnicaServiceTest {
         assertNotNull(resultado);
         assertEquals(1L, resultado.getId());
         assertEquals("Acrilico", resultado.getNombre());
-        assertFalse(entrada.getEstado_borrado(),
+        ArgumentCaptor<Tecnica> captor = ArgumentCaptor.forClass(Tecnica.class);
+        verify(tecnicaRepository).save(captor.capture());
+        assertFalse(captor.getValue().getEstado_borrado(),
                 "addTecnica debe poner estado_borrado=false antes de persistir");
-        verify(tecnicaRepository, times(1)).save(entrada);
     }
 
     // FIND ALL
@@ -127,18 +132,23 @@ class TecnicaServiceTest {
     @Test
     void updateTecnica_devuelveDTO() {
         // Arrange
-        Tecnica tecnica = new Tecnica();
-        tecnica.setId(1L);
-        tecnica.setNombre("Acrilico modificado");
-        when(tecnicaRepository.save(tecnica)).thenReturn(tecnica);
+        TecnicaRequestDTO dto = TecnicaRequestDTO.builder()
+                .nombre("Acrilico modificado")
+                .build();
+        Tecnica existente = new Tecnica();
+        existente.setId(1L);
+        existente.setNombre("Acrilico");
+        when(tecnicaRepository.findById(1L)).thenReturn(Optional.of(existente));
+        when(tecnicaRepository.save(any(Tecnica.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
-        TecnicaDTO resultado = tecnicaService.updateTecnica(tecnica);
+        TecnicaDTO resultado = tecnicaService.updateTecnica(dto, 1L);
 
         // Assert
         assertEquals(1L, resultado.getId());
         assertEquals("Acrilico modificado", resultado.getNombre());
-        verify(tecnicaRepository).save(tecnica);
+        verify(tecnicaRepository).save(existente);
     }
 
     //  DELETE

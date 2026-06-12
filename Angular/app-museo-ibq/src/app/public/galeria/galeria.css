@@ -111,6 +111,79 @@
   border-radius: 2px;
 }
 
+/* ── FILTROS ── */
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 18px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 36px 0;
+}
+
+.filtro-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.filtro-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-texto-tenue);
+}
+
+.filtro-select {
+  font-family: var(--fuente-base);
+  font-size: 0.88rem;
+  color: var(--color-texto);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 4px;
+  padding: 7px 12px;
+  min-width: 170px;
+  cursor: pointer;
+}
+
+.filtro-select:focus {
+  outline: none;
+  border-color: var(--color-acento);
+}
+
+.filtro-limpiar {
+  font-family: var(--fuente-base);
+  font-size: 0.82rem;
+  color: var(--color-acento);
+  background: transparent;
+  border: none;
+  padding: 7px 4px;
+  cursor: pointer;
+}
+
+.filtro-limpiar:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 650px) {
+  .filtros {
+    padding: 20px 16px 0;
+    gap: 12px;
+  }
+
+  .filtro-select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .filtro-grupo {
+    flex: 1 1 140px;
+  }
+}
+
 /* ── GRID DE OBRAS ── */
 
 .obras-grid {
@@ -352,6 +425,20 @@
 }
 .footer-line a:hover {
   text-decoration: underline;
+}
+.footer-redes {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 14px;
+}
+.footer-red {
+  color: #e0e0e0;
+  display: inline-flex;
+  transition: color 0.15s ease;
+}
+.footer-red:hover {
+  color: var(--color-acento);
 }
 .footer-copy {
   margin: 14px 0 0;

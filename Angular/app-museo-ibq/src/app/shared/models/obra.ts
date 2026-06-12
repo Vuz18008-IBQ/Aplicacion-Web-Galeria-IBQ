@@ -44,4 +44,5 @@ export interface ObraRequest {
   observaciones: string | null;
   autorId: number;
   tecnicaId: number;
+  materialIds: number[];
 }

@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pelayo.proyecto.galeiraibq.model.Tecnica;
+import pelayo.proyecto.galeiraibq.requestDTO.TecnicaRequestDTO;
 import pelayo.proyecto.galeiraibq.responseDTO.TecnicaDTO;
 import pelayo.proyecto.galeiraibq.service.TecnicaService;
 
@@ -32,14 +32,13 @@ public class TecnicaController {
     }
 
     @PostMapping
-    public ResponseEntity<TecnicaDTO> addTecnica(@RequestBody Tecnica tecnica) {
+    public ResponseEntity<TecnicaDTO> addTecnica(@RequestBody TecnicaRequestDTO tecnica) {
         return ResponseEntity.status(HttpStatus.CREATED).body(tecnicaService.addTecnica(tecnica));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TecnicaDTO> updateTecnica(@PathVariable Long id, @RequestBody Tecnica tecnica) {
-        tecnica.setId(id);
-        return ResponseEntity.ok(tecnicaService.updateTecnica(tecnica));
+    public ResponseEntity<TecnicaDTO> updateTecnica(@PathVariable Long id, @RequestBody TecnicaRequestDTO tecnica) {
+        return ResponseEntity.ok(tecnicaService.updateTecnica(tecnica, id));
     }
 
     @DeleteMapping("/{id}")

@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pelayo.proyecto.galeiraibq.model.Autor;
+import pelayo.proyecto.galeiraibq.requestDTO.AutorRequestDTO;
 import pelayo.proyecto.galeiraibq.responseDTO.AutorDTO;
 import pelayo.proyecto.galeiraibq.service.AutorService;
 
@@ -32,14 +32,13 @@ public class AutorController {
     }
 
     @PostMapping
-    public ResponseEntity<AutorDTO> addAutor(@RequestBody Autor autor) {
+    public ResponseEntity<AutorDTO> addAutor(@RequestBody AutorRequestDTO autor) {
         return ResponseEntity.status(HttpStatus.CREATED).body(autorService.addAutor(autor));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AutorDTO> updateAutor(@PathVariable Long id, @RequestBody Autor autor) {
-        autor.setId(id);
-        return ResponseEntity.ok(autorService.updateAutor(autor));
+    public ResponseEntity<AutorDTO> updateAutor(@PathVariable Long id, @RequestBody AutorRequestDTO autor) {
+        return ResponseEntity.ok(autorService.updateAutor(autor, id));
     }
 
     @DeleteMapping("/{id}")

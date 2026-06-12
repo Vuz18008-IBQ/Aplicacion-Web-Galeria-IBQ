@@ -2,11 +2,13 @@ package pelayo.proyecto.galeiraibq.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pelayo.proyecto.galeiraibq.model.Autor;
 import pelayo.proyecto.galeiraibq.repository.AutorRepository;
+import pelayo.proyecto.galeiraibq.requestDTO.AutorRequestDTO;
 import pelayo.proyecto.galeiraibq.responseDTO.AutorDTO;
 
 import java.util.List;
@@ -44,10 +46,20 @@ class AutorServiceTest {
     @Test
     void addAutor_estableceEstadoBorradoFalseYDevuelveDTOConTodosLosCampos() {
         // Arrange
-        Autor entrada = crearAutorEjemplo(null);
-        Autor guardado = crearAutorEjemplo(1L);
-        guardado.setEstado_borrado(false);
-        when(autorRepository.save(any(Autor.class))).thenReturn(guardado);
+        AutorRequestDTO entrada = AutorRequestDTO.builder()
+                .nombre("Pablo")
+                .apellidos("Picasso")
+                .fecha_nacimiento(1881)
+                .fecha_muerte(1973)
+                .corriente_artistica("Cubismo")
+                .lugar_nacimiento("Malaga")
+                .build();
+        when(autorRepository.save(any(Autor.class)))
+                .thenAnswer(invocation -> {
+                    Autor a = invocation.getArgument(0);
+                    a.setId(1L);
+                    return a;
+                });
 
         // Act
         AutorDTO resultado = autorService.addAutor(entrada);
@@ -62,8 +74,10 @@ class AutorServiceTest {
         assertEquals("Cubismo", resultado.getCorriente_artistica());
         assertEquals("Malaga", resultado.getLugar_nacimiento());
 
-        // Verificacion del comportamiento de estado_borrado=false antes del save.
-        assertFalse(entrada.getEstado_borrado(),
+        // Verificacion: la entidad persistida lleva estado_borrado=false.
+        ArgumentCaptor<Autor> captor = ArgumentCaptor.forClass(Autor.class);
+        verify(autorRepository).save(captor.capture());
+        assertFalse(captor.getValue().getEstado_borrado(),
                 "addAutor debe poner estado_borrado=false antes de persistir");
     }
 
@@ -123,14 +137,23 @@ class AutorServiceTest {
 
     @Test
     void updateAutor_devuelveDTO() {
-        Autor autor = crearAutorEjemplo(1L);
-        autor.setNombre("Pablo (modificado)");
-        when(autorRepository.save(autor)).thenReturn(autor);
+        AutorRequestDTO dto = AutorRequestDTO.builder()
+                .nombre("Pablo (modificado)")
+                .apellidos("Picasso")
+                .fecha_nacimiento(1881)
+                .fecha_muerte(1973)
+                .corriente_artistica("Cubismo")
+                .lugar_nacimiento("Malaga")
+                .build();
+        Autor existente = crearAutorEjemplo(1L);
+        when(autorRepository.findById(1L)).thenReturn(Optional.of(existente));
+        when(autorRepository.save(any(Autor.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
-        AutorDTO resultado = autorService.updateAutor(autor);
+        AutorDTO resultado = autorService.updateAutor(dto, 1L);
 
         assertEquals("Pablo (modificado)", resultado.getNombre());
-        verify(autorRepository).save(autor);
+        verify(autorRepository).save(existente);
     }
 
     // DELETE

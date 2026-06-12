@@ -51,5 +51,20 @@ export const adminRoutes: Routes = [
     canMatch: [authGuard],
     loadComponent: () => import('./tecnica-form/tecnica-form').then(m => m.TecnicaForm)
   },
+  {
+    path: 'materiales',
+    canMatch: [authGuard],
+    loadComponent: () => import('./materiales-list/materiales-list').then(m => m.MaterialesList)
+  },
+  {
+    path: 'materiales/nuevo',
+    canMatch: [authGuard],
+    loadComponent: () => import('./material-form/material-form').then(m => m.MaterialForm)
+  },
+  {
+    path: 'materiales/:id/editar',
+    canMatch: [authGuard],
+    loadComponent: () => import('./material-form/material-form').then(m => m.MaterialForm)
+  },
   { path: '', redirectTo: 'obras', pathMatch: 'full' }
 ];

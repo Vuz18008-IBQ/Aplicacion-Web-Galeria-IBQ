@@ -10,6 +10,8 @@ import pelayo.proyecto.galeiraibq.model.Imagen;
 import pelayo.proyecto.galeiraibq.model.Obra;
 import pelayo.proyecto.galeiraibq.model.Tecnica;
 import pelayo.proyecto.galeiraibq.repository.AutorRepository;
+import pelayo.proyecto.galeiraibq.repository.MaterialRepository;
+import pelayo.proyecto.galeiraibq.repository.ObraMaterialRepository;
 import pelayo.proyecto.galeiraibq.repository.ObraRepository;
 import pelayo.proyecto.galeiraibq.repository.TecnicaRepository;
 import pelayo.proyecto.galeiraibq.requestDTO.ObraRequestDTO;
@@ -26,10 +28,12 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ObraServiceTest {
 
-    // Tres mocks debido a que el servicio depende de tres repositorios distintos.
+    // Cinco mocks: el servicio depende de cinco repositorios distintos.
     @Mock private ObraRepository obraRepository;
     @Mock private AutorRepository autorRepository;
     @Mock private TecnicaRepository tecnicaRepository;
+    @Mock private MaterialRepository materialRepository;
+    @Mock private ObraMaterialRepository obraMaterialRepository;
 
     @InjectMocks
     private ObraService obraService;

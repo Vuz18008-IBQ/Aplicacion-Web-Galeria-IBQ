@@ -324,6 +324,20 @@
 .footer-line a:hover {
   text-decoration: underline;
 }
+.footer-redes {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 14px;
+}
+.footer-red {
+  color: #e0e0e0;
+  display: inline-flex;
+  transition: color 0.15s ease;
+}
+.footer-red:hover {
+  color: var(--color-acento);
+}
 .footer-copy {
   margin: 14px 0 0;
   font-size: 0.75rem;

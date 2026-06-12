@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pelayo.proyecto.galeiraibq.model.Autor;
 import pelayo.proyecto.galeiraibq.repository.AutorRepository;
+import pelayo.proyecto.galeiraibq.requestDTO.AutorRequestDTO;
 import pelayo.proyecto.galeiraibq.responseDTO.AutorDTO;
 
 import java.util.List;
@@ -18,7 +19,14 @@ public class AutorService {
         this.autorRepository = autorRepository;
     }
 
-    public AutorDTO addAutor(Autor autor) {
+    public AutorDTO addAutor(AutorRequestDTO dto) {
+        Autor autor = new Autor();
+        autor.setNombre(dto.getNombre());
+        autor.setApellidos(dto.getApellidos());
+        autor.setFecha_nacimiento(dto.getFecha_nacimiento());
+        autor.setFecha_muerte(dto.getFecha_muerte());
+        autor.setCorriente_artistica(dto.getCorriente_artistica());
+        autor.setLugar_nacimiento(dto.getLugar_nacimiento());
         autor.setEstado_borrado(false);
         return mapToDTO(autorRepository.save(autor));
     }
@@ -35,7 +43,16 @@ public class AutorService {
         return mapToDTO(autor);
     }
 
-    public AutorDTO updateAutor(Autor autor) {
+    public AutorDTO updateAutor(AutorRequestDTO dto, Long id) {
+        Autor autor = autorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Autor no encontrado con id: " + id));
+        autor.setNombre(dto.getNombre());
+        autor.setApellidos(dto.getApellidos());
+        autor.setFecha_nacimiento(dto.getFecha_nacimiento());
+        autor.setFecha_muerte(dto.getFecha_muerte());
+        autor.setCorriente_artistica(dto.getCorriente_artistica());
+        autor.setLugar_nacimiento(dto.getLugar_nacimiento());
+        autor.setEstado_borrado(false);
         return mapToDTO(autorRepository.save(autor));
     }
 

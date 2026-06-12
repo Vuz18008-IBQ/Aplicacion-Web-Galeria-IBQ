@@ -5,7 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pelayo.proyecto.galeiraibq.model.Material;
+import pelayo.proyecto.galeiraibq.requestDTO.MaterialRequestDTO;
+import pelayo.proyecto.galeiraibq.responseDTO.MaterialResponseDTO;
 import pelayo.proyecto.galeiraibq.service.MaterialService;
 
 import java.util.List;
@@ -21,24 +22,23 @@ public class MaterialController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Material>> getAllMateriales() {
+    public ResponseEntity<List<MaterialResponseDTO>> getAllMateriales() {
         return ResponseEntity.ok(materialService.findAllMaterial());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Material> getMaterialById(@PathVariable Long id) {
+    public ResponseEntity<MaterialResponseDTO> getMaterialById(@PathVariable Long id) {
         return ResponseEntity.ok(materialService.findMaterialById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Material> addMaterial(@RequestBody Material material) {
+    public ResponseEntity<MaterialResponseDTO> addMaterial(@RequestBody MaterialRequestDTO material) {
         return ResponseEntity.status(HttpStatus.CREATED).body(materialService.addMaterial(material));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Material> updateMaterial(@PathVariable Long id, @RequestBody Material material) {
-        material.setId(id);
-        return ResponseEntity.ok(materialService.updateMaterial(material));
+    public ResponseEntity<MaterialResponseDTO> updateMaterial(@PathVariable Long id, @RequestBody MaterialRequestDTO material) {
+        return ResponseEntity.ok(materialService.updateMaterial(material, id));
     }
 
     @DeleteMapping("/{id}")
